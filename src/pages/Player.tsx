@@ -1,4 +1,4 @@
-import {ChevronDown, MessageCircle} from 'lucide-react'
+import { MessageCircle} from 'lucide-react'
 
 import { Header } from '../components/Header'
 import { Video } from '../components/Video'
