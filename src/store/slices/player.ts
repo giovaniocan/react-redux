@@ -1,4 +1,4 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+/* import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api } from "../../lib/axios";
 
 interface Course{
@@ -78,3 +78,4 @@ export const playerSlice = createSlice({
 export const player =  playerSlice.reducer
 
 export const { play, next } = playerSlice.actions
+ */
