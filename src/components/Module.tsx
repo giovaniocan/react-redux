@@ -1,10 +1,9 @@
 import { ChevronDown } from "lucide-react";
 import { Lesson } from "./Lesson";
-import { useDispatch } from "react-redux";
 import { play } from "../store/slices/player";
 
 import * as Collapsible from '@radix-ui/react-collapsible';
-import { useAppSelector } from "../store";
+import { useAppDispatch, useAppSelector } from "../store";
 
 interface ModuleProps{
     title: string;
@@ -13,7 +12,7 @@ interface ModuleProps{
 }
 
 export function Module({amountOfLessons, title, moduleIndex}:ModuleProps){
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
 
     const lessons = useAppSelector((state) => {
         return state.player.course?.modules[moduleIndex].lessons
@@ -24,6 +23,29 @@ export function Module({amountOfLessons, title, moduleIndex}:ModuleProps){
 
         return {currentLessonIndex, currentModuleIndex}
     })
+
+
+    const isCouseLoading = useAppSelector(state => state.player.isLoading)
+
+    if(isCouseLoading){
+        return (
+            <div className="flex flex-col gap-2 animate-pulse">
+                <div className="flex w-full items-center gap-3 bg-zinc-800 p-4">
+                    <div className='flex h-10 w-10 rounded-full items-center justify-center bg-zinc-900 text-xs' />
+                    <div className="flex flex-col w-full gap-1">
+                        <div className='flex bg-zinc-900 w-1/3 h-4'/>
+                        <div className='flex bg-zinc-900 w-1/4 h-4'/>
+                    </div>
+                    
+                </div>
+                <div className="flex flex-col w-full gap-1 bg-zinc-800">
+                    <div className="w-full bg-zinc-950 h-8"/>
+                    <div className="w-full bg-zinc-950 h-8"/>
+                    <div className="w-full bg-zinc-950 h-8"/>
+                </div>
+            </div>
+        )
+    }
 
     
     return(

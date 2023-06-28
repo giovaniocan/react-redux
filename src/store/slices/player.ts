@@ -1,5 +1,6 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { useAppSelector } from "..";
+import { api } from "../../lib/axios";
 
 interface Course{
   id: number,
@@ -18,6 +19,7 @@ export interface PlayerState{
   course: Course | null,
   currentModuleIndex: number,
   currentLessonIndex: number,
+  isLoading: boolean
   
 }
 
@@ -25,16 +27,22 @@ const initialState:PlayerState  = {
   course:null,
   currentModuleIndex: 0,
   currentLessonIndex: 0,
+  isLoading: true,
 }
+
+export const loadCourse = createAsyncThunk( // nossa função assincrona
+  'player/load',
+  async () => {
+   const response = await api.get('/courses/1')
+  
+   return response.data
+  }
+)
 
 export const playerSlice = createSlice({
     name: "player",
     initialState,
     reducers:{
-      start:(state, action: PayloadAction<Course>) => {
-        state.course = action.payload
-      },
-
       play: (state, action: PayloadAction<[number, number]>) => {
         state.currentModuleIndex = action.payload[0]
         state.currentLessonIndex = action.payload[1]
@@ -56,11 +64,21 @@ export const playerSlice = createSlice({
         }
       },
     }, // essas são as ações
+    extraReducers(builder) { // faz um reducer que pode ouvir ações de qualquer lugar,  aqui é uma ação extra, estamos falando que quando o loadcourse ficar fullfilled(deu certo), ele vai executar tal ação
+      builder.addCase(loadCourse.pending, (state, action) => {
+        state.isLoading = true
+      })
+
+      builder.addCase(loadCourse.fulfilled, (state, action) => {
+        state.course = action.payload
+        state.isLoading = false
+      })
+    },
 })
 
 export const player =  playerSlice.reducer
 
-export const { play, next, start } = playerSlice.actions
+export const { play, next } = playerSlice.actions
 
 export const useCurrentLesson = () => {
   
