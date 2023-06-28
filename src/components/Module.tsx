@@ -1,9 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { Lesson } from "./Lesson";
-import { play } from "../store/slices/player";
-
 import * as Collapsible from '@radix-ui/react-collapsible';
-import { useAppDispatch, useAppSelector } from "../store";
+import { useStore } from "../zustand-store";
 
 interface ModuleProps{
     title: string;
@@ -12,22 +10,18 @@ interface ModuleProps{
 }
 
 export function Module({amountOfLessons, title, moduleIndex}:ModuleProps){
-    const dispatch = useAppDispatch()
-
-    const lessons = useAppSelector((state) => {
-        return state.player.course?.modules[moduleIndex].lessons
-    })
-
-    const {currentLessonIndex, currentModuleIndex} = useAppSelector(state => {
-        const {currentModuleIndex, currentLessonIndex} = state.player
-
-        return {currentLessonIndex, currentModuleIndex}
-    })
+    const {currentLessonIndex, currentModuleIndex, play, isLoading, lessons} = useStore((store) => {
+        return {
+            lessons: store.course?.modules[moduleIndex].lessons,   
+            currentLessonIndex: store.currentLessonIndex,
+            currentModuleIndex: store.currentModuleIndex,
+            play: store.play,
+            isLoading: store.isLoading,
+     }}
+    )
 
 
-    const isCouseLoading = useAppSelector(state => state.player.isLoading)
-
-    if(isCouseLoading){
+    if(isLoading){
         return (
             <div className="flex flex-col gap-2 animate-pulse">
                 <div className="flex w-full items-center gap-3 bg-zinc-800 p-4">
@@ -69,7 +63,7 @@ export function Module({amountOfLessons, title, moduleIndex}:ModuleProps){
                                 title={lesson.title} 
                                 duration={lesson.duration} 
                                 key={lesson.id}
-                                onPlay={() => dispatch(play([moduleIndex, lessonIndex]))}
+                                onPlay={() => play([moduleIndex, lessonIndex])}
                                 isCurrent={isCurrent}
                              />
                                 
